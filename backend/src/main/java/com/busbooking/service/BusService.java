@@ -20,7 +20,12 @@ public class BusService {
     private final SeatRepository seatRepository;
 
     public List<BusResponseDTO> searchBuses(String source, String destination, LocalDate date) {
-        List<Bus> buses = busRepository.findBySourceAndDestinationAndTravelDate(source, destination, date);
+        // Normalize search to lowercase to match our seeded data
+        List<Bus> buses = busRepository.findBySourceAndDestinationAndTravelDate(
+                source.trim().toLowerCase(), 
+                destination.trim().toLowerCase(), 
+                date
+        );
         return buses.stream()
                 .map(this::mapToBusResponseDTO)
                 .collect(Collectors.toList());

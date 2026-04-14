@@ -6,6 +6,7 @@ import com.busbooking.entity.User;
 import com.busbooking.repository.BusRepository;
 import com.busbooking.repository.SeatRepository;
 import com.busbooking.repository.UserRepository;
+import com.busbooking.repository.BookingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -25,11 +26,18 @@ public class DataInitializer implements CommandLineRunner {
     private final BusRepository busRepository;
     private final SeatRepository seatRepository;
     private final UserRepository userRepository;
+    private final BookingRepository bookingRepository;
 
     @Override
     public void run(String... args) throws Exception {
-        if (busRepository.count() == 0) {
-            log.info("Database is empty. Initializing sample data...");
+        log.info("Cleaning up old data and re-initializing sample data for testing...");
+        // Clear old data to ensure new seed works perfectly
+        seatRepository.deleteAll();
+        bookingRepository.deleteAll();
+        busRepository.deleteAll();
+        userRepository.deleteAll();
+        
+        log.info("Initializing fresh sample data...");
 
             // 1. Create a Test User
             User testUser = User.builder()
@@ -40,18 +48,17 @@ public class DataInitializer implements CommandLineRunner {
                     .build();
             userRepository.save(testUser);
 
-            // 2. Create Sample Buses
-            createBus("KPN Travels", "KPN001", "Erode", "Chennai", 
+            // 2. Create Sample Buses (lowercase names for easy search)
+            createBus("KPN Travels", "KPN001", "erode", "chennai", 
                       LocalDate.now().plusDays(1), LocalTime.of(21, 0), LocalTime.of(5, 30), 650.00);
             
-            createBus("SREE Travels", "SRE002", "Erode", "Chennai", 
-                      LocalDate.now().plusDays(1), LocalTime.of(22, 30), LocalTime.of(6, 0), 750.00);
+            createBus("SREE Travels", "SRE002", "erode", "chennai", 
+                      LocalDate.of(2026, 4, 17), LocalTime.of(22, 30), LocalTime.of(6, 0), 750.00);
 
-            createBus("VRL Travels", "VRL003", "Bangalore", "Erode", 
+            createBus("VRL Travels", "VRL003", "bangalore", "erode", 
                       LocalDate.now().plusDays(2), LocalTime.of(23, 0), LocalTime.of(4, 0), 500.00);
 
             log.info("Sample data initialization complete.");
-        }
     }
 
     private void createBus(String name, String number, String source, String dest, 
