@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -94,5 +95,33 @@ public class BookingService {
         seatRepository.save(seat);
         
         log.info("Booking ID {} cancelled successfully", bookingId);
+    }
+
+    public List<BookingResponseDTO> getBookingHistory(Long userId) {
+        log.info("Fetching booking history for userId: {}", userId);
+        return bookingRepository.findByUserId(userId)
+                .stream()
+                .map(booking -> BookingResponseDTO.builder()
+                        .bookingId(booking.getId())
+                        .status(booking.getBookingStatus())
+                        .bookingTime(booking.getBookingTime())
+                        .busName(booking.getBus().getBusName())
+                        .seatNumber(booking.getSeat().getSeatNumber())
+                        .build())
+                .toList();
+    }
+
+    public BookingResponseDTO getBookingDetails(Long bookingId) {
+        log.info("Fetching booking details for bookingId: {}", bookingId);
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
+
+        return BookingResponseDTO.builder()
+                .bookingId(booking.getId())
+                .status(booking.getBookingStatus())
+                .bookingTime(booking.getBookingTime())
+                .busName(booking.getBus().getBusName())
+                .seatNumber(booking.getSeat().getSeatNumber())
+                .build();
     }
 }

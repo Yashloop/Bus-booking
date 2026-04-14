@@ -26,4 +26,14 @@ public class BookingController {
         bookingService.cancelBooking(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<java.util.List<BookingResponseDTO>> getBookingHistory(@PathVariable Long userId) {
+        return ResponseEntity.ok(bookingService.getBookingHistory(userId));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<BookingResponseDTO> getBookingDetails(@PathVariable Long id) {
+        return ResponseEntity.ok(bookingService.getBookingDetails(id));
+    }
 }

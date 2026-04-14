@@ -10,6 +10,7 @@ const Register = () => {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -25,7 +26,7 @@ const Register = () => {
     setError("");
 
     try {
-      await authService.register(formData);
+      await register(formData);
       alert("Registration successful! Please login.");
       navigate("/login");
     } catch (err) {
