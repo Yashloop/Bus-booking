@@ -7,10 +7,20 @@ yarn-error.log*
 # Production builds
 dist/
 build/
+pnpm-debug.log*
+lerna-debug.log*
+
+# Production build
+dist/
+dist-ssr/
+build/
+.next/
+out/
 
 # Environment variables
 .env
 .env.local
+<<<<<<< HEAD
 .env.development.local
 .env.test.local
 .env.production.local
@@ -34,10 +44,21 @@ coverage/
 
 # IDEs
 .vscode/
+=======
+.env.*.local
+.env.production.local
+.env.development.local
+.env.test.local
+
+# IDE and editor files
+.vscode/*
+!.vscode/extensions.json
+>>>>>>> frontend-2
 .idea/
 *.swp
 *.swo
 *~
+<<<<<<< HEAD
 
 # OS
 .DS_Store
@@ -48,3 +69,32 @@ Thumbs.db
 
 # Local ESM cache
 node_modules/.vite
+=======
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.local
+
+# OS files
+Thumbs.db
+.AppleDouble
+.LSOverride
+._*
+
+# Testing
+coverage/
+.nyc_output/
+
+# Editor specific
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.history/
+>>>>>>> frontend-2

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import authService from "../services/authService.js";
+import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {

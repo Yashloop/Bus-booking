@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import authService from "../services/authService.js";
+import { useAuth } from "../contexts/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const Login = () => {
@@ -9,6 +9,7 @@ const Login = () => {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
@@ -26,7 +27,7 @@ const Login = () => {
     setError("");
 
     try {
-      await authService.login(formData.email, formData.password);
+      await login(formData.email, formData.password);
       navigate(from, { replace: true });
     } catch (err) {
       setError(err.message);
