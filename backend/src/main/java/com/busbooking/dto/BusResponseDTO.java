@@ -23,5 +23,6 @@ public class BusResponseDTO {
     private LocalTime departureTime;
     private LocalTime arrivalTime;
     private Integer totalSeats;
+    private Integer availableSeats;
     private BigDecimal fare;
 }

@@ -31,6 +31,24 @@ public class BusService {
                 .collect(Collectors.toList());
     }
 
+    public com.busbooking.dto.BusSeatsResponseDTO getBusWithSeats(Long busId) {
+        Bus bus = busRepository.findById(busId)
+                .orElseThrow(() -> new com.busbooking.exception.ResourceNotFoundException("Bus not found"));
+        
+        List<SeatResponseDTO> seats = seatRepository.findByBusId(busId).stream()
+                .map(seat -> SeatResponseDTO.builder()
+                        .id(seat.getId())
+                        .seatNumber(seat.getSeatNumber())
+                        .isBooked(seat.getIsBooked())
+                        .build())
+                .collect(Collectors.toList());
+
+        return com.busbooking.dto.BusSeatsResponseDTO.builder()
+                .busInfo(mapToBusResponseDTO(bus))
+                .seats(seats)
+                .build();
+    }
+
     public List<SeatResponseDTO> getSeatsByBusId(Long busId) {
         List<Seat> seats = seatRepository.findByBusId(busId);
         return seats.stream()
@@ -43,6 +61,11 @@ public class BusService {
     }
 
     private BusResponseDTO mapToBusResponseDTO(Bus bus) {
+        // Count available seats dynamically
+        long availableCount = seatRepository.findByBusId(bus.getId()).stream()
+                .filter(s -> !s.getIsBooked())
+                .count();
+
         return BusResponseDTO.builder()
                 .id(bus.getId())
                 .busName(bus.getBusName())
@@ -53,6 +76,7 @@ public class BusService {
                 .departureTime(bus.getDepartureTime())
                 .arrivalTime(bus.getArrivalTime())
                 .totalSeats(bus.getTotalSeats())
+                .availableSeats((int) availableCount)
                 .fare(bus.getFare())
                 .build();
     }

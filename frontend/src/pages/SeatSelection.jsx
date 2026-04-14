@@ -23,11 +23,15 @@ function SeatSelection() {
     try {
       setLoading(true);
       const response = await bookingService.getSeats(busId);
-      setSeats(response.data);
+      // Backend now returns an object { busInfo: {...}, seats: [...] }
+      const data = response.data;
       
-      // Extract bus information from response (assuming it's included)
-      if (response.data.busInfo) {
-        setBusInfo(response.data.busInfo);
+      if (data.seats) {
+        setSeats(data.seats);
+      }
+      
+      if (data.busInfo) {
+        setBusInfo(data.busInfo);
       }
     } catch (err) {
       console.error('Error fetching seats:', err);
@@ -82,6 +86,7 @@ function SeatSelection() {
         'Failed to complete booking. Please try again.'
       );
     } finally {
+      setLoading(false); // Fix: user was using loading but should be bookingLoading, however history page will load
       setBookingLoading(false);
     }
   };
@@ -204,7 +209,13 @@ function SeatSelection() {
         <h3>Booking Summary</h3>
         <div className="summary-row">
           <span>Selected Seats: </span>
-          <span>{selectedSeats.length > 0 ? selectedSeats.join(', ') : 'None'}</span>
+          <span>
+            {selectedSeats.length > 0 
+              ? selectedSeats
+                  .map(id => seats.find(s => s.id === id)?.seatNumber)
+                  .join(', ') 
+              : 'None'}
+          </span>
         </div>
         <div className="summary-row">
           <span>Price per Seat:</span>

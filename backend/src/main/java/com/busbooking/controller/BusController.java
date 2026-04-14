@@ -27,7 +27,7 @@ public class BusController {
     }
 
     @GetMapping("/{id}/seats")
-    public ResponseEntity<List<SeatResponseDTO>> getSeats(@PathVariable Long id) {
-        return ResponseEntity.ok(busService.getSeatsByBusId(id));
+    public ResponseEntity<com.busbooking.dto.BusSeatsResponseDTO> getSeats(@PathVariable Long id) {
+        return ResponseEntity.ok(busService.getBusWithSeats(id));
     }
 }

@@ -66,13 +66,7 @@ public class BookingService {
         Booking savedBooking = bookingRepository.save(booking);
         log.info("Booking confirmed with ID: {}", savedBooking.getId());
 
-        return BookingResponseDTO.builder()
-                .bookingId(savedBooking.getId())
-                .status(savedBooking.getBookingStatus())
-                .bookingTime(savedBooking.getBookingTime())
-                .busName(bus.getBusName())
-                .seatNumber(seat.getSeatNumber())
-                .build();
+        return mapToBookingResponseDTO(savedBooking);
     }
 
     @Transactional
@@ -101,13 +95,7 @@ public class BookingService {
         log.info("Fetching booking history for userId: {}", userId);
         return bookingRepository.findByUserId(userId)
                 .stream()
-                .map(booking -> BookingResponseDTO.builder()
-                        .bookingId(booking.getId())
-                        .status(booking.getBookingStatus())
-                        .bookingTime(booking.getBookingTime())
-                        .busName(booking.getBus().getBusName())
-                        .seatNumber(booking.getSeat().getSeatNumber())
-                        .build())
+                .map(this::mapToBookingResponseDTO)
                 .toList();
     }
 
@@ -116,12 +104,28 @@ public class BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
 
+        return mapToBookingResponseDTO(booking);
+    }
+
+    private BookingResponseDTO mapToBookingResponseDTO(Booking booking) {
+        Bus bus = booking.getBus();
+        Seat seat = booking.getSeat();
+        
         return BookingResponseDTO.builder()
+                .id(booking.getId())
                 .bookingId(booking.getId())
+                .bookingStatus(booking.getBookingStatus())
                 .status(booking.getBookingStatus())
                 .bookingTime(booking.getBookingTime())
-                .busName(booking.getBus().getBusName())
-                .seatNumber(booking.getSeat().getSeatNumber())
+                .busName(bus.getBusName())
+                .busNumber(bus.getBusNumber())
+                .seatNumber(seat.getSeatNumber())
+                .source(bus.getSource())
+                .destination(bus.getDestination())
+                .travelDate(bus.getTravelDate())
+                .departureTime(bus.getDepartureTime())
+                .arrivalTime(bus.getArrivalTime())
+                .fare(bus.getFare())
                 .build();
     }
 }
