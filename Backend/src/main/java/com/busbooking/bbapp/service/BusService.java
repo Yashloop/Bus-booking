@@ -1,0 +1,54 @@
+package com.busbooking.bbapp.service;
+
+import com.busbooking.bbapp.dto.BusResponseDTO;
+import com.busbooking.bbapp.dto.SeatResponseDTO;
+import com.busbooking.bbapp.entity.Bus;
+import com.busbooking.bbapp.entity.Seat;
+import com.busbooking.bbapp.repository.BusRepository;
+import com.busbooking.bbapp.repository.SeatRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class BusService {
+    private final BusRepository busRepository;
+    private final SeatRepository seatRepository;
+
+    public List<BusResponseDTO> searchBuses(String source, String destination, LocalDate date) {
+        List<Bus> buses = busRepository.findBySourceAndDestinationAndTravelDate(source, destination, date);
+        return buses.stream()
+                .map(this::mapToBusResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<SeatResponseDTO> getSeatsByBusId(Long busId) {
+        List<Seat> seats = seatRepository.findByBusId(busId);
+        return seats.stream()
+                .map(seat -> SeatResponseDTO.builder()
+                        .id(seat.getId())
+                        .seatNumber(seat.getSeatNumber())
+                        .isBooked(seat.getIsBooked())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    private BusResponseDTO mapToBusResponseDTO(Bus bus) {
+        return BusResponseDTO.builder()
+                .id(bus.getId())
+                .busName(bus.getBusName())
+                .busNumber(bus.getBusNumber())
+                .source(bus.getSource())
+                .destination(bus.getDestination())
+                .travelDate(bus.getTravelDate())
+                .departureTime(bus.getDepartureTime())
+                .arrivalTime(bus.getArrivalTime())
+                .totalSeats(bus.getTotalSeats())
+                .fare(bus.getFare())
+                .build();
+    }
+}
